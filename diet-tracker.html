@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>식단 기록</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh}
+.app{max-width:480px;margin:0 auto;padding:1rem}
+h1{font-size:18px;font-weight:600;margin-bottom:1rem;color:#1a1a1a}
+.tab-bar{display:flex;gap:6px;margin-bottom:1rem}
+.tab-bar button{flex:1;padding:8px;font-size:13px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;transition:all .15s}
+.tab-bar button.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px}
+.section-label{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.meal-block{margin-bottom:1rem}
+.meal-title{font-size:13px;font-weight:600;color:#555;margin-bottom:6px}
+.food-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.food-row input[type="text"]{flex:2;font-size:13px;padding:7px 9px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;min-width:0}
+.food-row input[type="number"]{font-size:13px;padding:7px 9px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;min-width:0}
+.food-row .w-g{width:52px;flex:none}
+.food-row .w-k{width:60px;flex:none}
+.food-row button.del{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;padding:2px;line-height:1;flex:none}
+.food-row button.del:hover{color:#e24b4a}
+.add-food-btn{font-size:12px;color:#888;background:none;border:1px dashed #ddd;border-radius:8px;padding:5px 10px;cursor:pointer;width:100%;margin-bottom:4px}
+.add-food-btn:hover{background:#f5f5f5}
+select{font-size:12px;border:1px solid #e5e5e5;border-radius:8px;padding:6px 8px;background:#fafafa;color:#1a1a1a;margin-bottom:12px;width:100%}
+.template-btn{font-size:12px;color:#555;background:none;border:1px solid #e5e5e5;border-radius:8px;padding:6px 10px;cursor:pointer;margin-bottom:12px;width:100%}
+.template-btn:hover{background:#f5f5f5}
+textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;color:#1a1a1a;resize:none;font-family:inherit;min-height:72px}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.btn-row button{padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:1px solid #ddd;background:#fff;color:#1a1a1a;cursor:pointer;transition:all .15s}
+.btn-row button:hover{background:#f5f5f5}
+.btn-row button:active{transform:scale(.98)}
+.btn-notion{border-color:#000!important;background:#000!important;color:#fff!important}
+.btn-notion:hover{background:#333!important}
+.nutrient-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.nutrient-card{background:#f5f5f5;border-radius:8px;padding:10px 12px}
+.nutrient-label{font-size:11px;color:#888;margin-bottom:4px}
+.nutrient-value{font-size:20px;font-weight:600;color:#1a1a1a}
+.nutrient-unit{font-size:11px;color:#aaa}
+.progress-bar-wrap{margin-bottom:10px}
+.progress-info{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px}
+.progress-bg{height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .3s}
+.pf-kcal{background:#7F77DD}.pf-protein{background:#1D9E75}.pf-carb{background:#EF9F27}.pf-fat{background:#D85A30}
+.date-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.date-nav button{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:6px 12px;cursor:pointer;color:#555;font-size:13px}
+.date-nav button:hover{background:#f5f5f5}
+.date-display{font-size:14px;font-weight:600;color:#1a1a1a}
+.history-item{border-bottom:1px solid #f0f0f0;padding:10px 0;cursor:pointer}
+.history-item:last-child{border-bottom:none}
+.history-item:hover{opacity:.7}
+.history-date{font-size:13px;font-weight:600;color:#1a1a1a}
+.history-meta{font-size:12px;color:#888;margin-top:2px}
+.empty-state{text-align:center;padding:2rem 1rem;color:#bbb;font-size:13px}
+.toast{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:10px;display:none}
+.toast.ok{background:#e6f4ea;color:#1e7e34;display:block}
+.toast.err{background:#fdecea;color:#c62828;display:block}
+.token-input-wrap{display:flex;gap:8px;margin-bottom:10px}
+.token-input-wrap input{flex:1;font-size:12px;padding:7px 9px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa}
+.token-input-wrap button{font-size:12px;padding:7px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;white-space:nowrap}
+.setup-banner{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#795548;line-height:1.6}
+code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-family:monospace}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>식단 기록</h1>
+  <div class="tab-bar">
+    <button class="active" onclick="showTab('record')" id="tab-record">기록</button>
+    <button onclick="showTab('summary')" id="tab-summary">요약</button>
+    <button onclick="showTab('history')" id="tab-history">히스토리</button>
+    <button onclick="showTab('settings')" id="tab-settings">⚙️</button>
+  </div>
+
+  <div id="panel-record">
+    <div id="setup-banner" class="setup-banner" style="display:none">
+      ⚠️ 노션 토큰이 설정되지 않았어. <strong>⚙️ 설정 탭</strong>에서 토큰과 DB ID를 입력해줘.
+    </div>
+    <div class="date-nav">
+      <button onclick="changeDate(-1)">◀</button>
+      <span class="date-display" id="date-display"></span>
+      <button onclick="changeDate(1)">▶</button>
+    </div>
+    <div class="card">
+      <button class="template-btn" onclick="loadTemplate()">📋 내 식단 불러오기</button>
+      <select id="mode-select">
+        <option value="running">러닝 기간 (목표 1,523kcal)</option>
+        <option value="gym">헬스 복귀 후 (목표 1,733kcal)</option>
+      </select>
+      <div id="meals-container"></div>
+      <div class="meal-block">
+        <p class="section-label">메모</p>
+        <textarea id="memo-input" placeholder="컨디션, 운동 강도 등..."></textarea>
+      </div>
+      <div class="btn-row">
+        <button onclick="saveLocal()">💾 저장</button>
+        <button class="btn-notion" onclick="saveNotion()">N 노션 저장</button>
+      </div>
+      <div class="toast" id="toast-record"></div>
+    </div>
+  </div>
+
+  <div id="panel-summary" style="display:none">
+    <div class="date-nav">
+      <button onclick="changeDate(-1)">◀</button>
+      <span class="date-display" id="date-display2"></span>
+      <button onclick="changeDate(1)">▶</button>
+    </div>
+    <div class="card">
+      <p class="section-label">섭취량</p>
+      <div class="nutrient-grid" id="nutrient-grid"></div>
+      <div id="progress-bars"></div>
+    </div>
+    <div class="card">
+      <p class="section-label">식사 내역</p>
+      <div id="meal-summary"></div>
+    </div>
+    <div class="card" id="memo-summary-card" style="display:none">
+      <p class="section-label">메모</p>
+      <p style="font-size:13px;color:#555;line-height:1.6" id="memo-summary"></p>
+    </div>
+  </div>
+
+  <div id="panel-history" style="display:none">
+    <div class="card">
+      <p class="section-label">기록된 날짜</p>
+      <div id="history-list"></div>
+    </div>
+  </div>
+
+  <div id="panel-settings" style="display:none">
+    <div class="card">
+      <p class="section-label">노션 연동 설정</p>
+      <p style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.6">토큰과 DB ID는 이 기기 브라우저에만 저장돼. 코드에 포함되지 않아서 안전해.</p>
+      <p style="font-size:12px;color:#666;margin-bottom:6px;font-weight:600">Integration 토큰</p>
+      <div class="token-input-wrap">
+        <input type="password" id="token-input" placeholder="secret_xxx...">
+      </div>
+      <p style="font-size:12px;color:#666;margin-bottom:6px;font-weight:600">DB ID</p>
+      <div class="token-input-wrap">
+        <input type="text" id="dbid-input" placeholder="32자리 ID">
+      </div>
+      <button onclick="saveSettings()" style="width:100%;padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:1px solid #ddd;background:#1a1a1a;color:#fff;cursor:pointer;margin-top:4px">설정 저장</button>
+      <div class="toast" id="toast-settings"></div>
+    </div>
+    <div class="card">
+      <p class="section-label">노션 DB 컬럼</p>
+      <div style="font-size:12px;color:#666;line-height:2.2">
+        <div><code>날짜</code> — Date</div>
+        <div><code>모드</code> — Select</div>
+        <div><code>칼로리</code> — Number</div>
+        <div><code>단백질</code> — Number</div>
+        <div><code>탄수화물</code> — Number</div>
+        <div><code>지방</code> — Number</div>
+        <div><code>식사내역</code> — Text</div>
+        <div><code>메모</code> — Text</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB_KEY='diet_v3';
+const CFG_KEY='diet_cfg';
+const MEALS=['아침','점심','저녁'];
+const TARGETS={running:{kcal:1523,p:152,c:121,f:43},gym:{kcal:1733,p:154,c:153,f:43}};
+const TMPL={
+  running:{
+    '아침':[{name:'그릭요거트',kcal:59,p:10,c:4,f:0.4,g:100},{name:'냉동 블루베리',kcal:29,p:0.4,c:7,f:0.2,g:50},{name:'달걀 2개',kcal:140,p:12,c:0,f:10,g:100},{name:'아몬드',kcal:240,p:8,c:8,f:20,g:40}],
+    '점심':[{name:'밥',kcal:260,p:4,c:57,f:0.4,g:200},{name:'닭가슴살',kcal:220,p:46,c:0,f:2.4,g:200},{name:'달걀',kcal:70,p:6,c:0,f:5,g:50}],
+    '저녁':[{name:'밥',kcal:195,p:3,c:43,f:0.3,g:150},{name:'닭가슴살',kcal:110,p:23,c:0,f:1.2,g:100},{name:'프로틴 2스쿱',kcal:200,p:40,c:6,f:3,g:50}]
+  },
+  gym:{
+    '아침':[{name:'그릭요거트',kcal:59,p:10,c:4,f:0.4,g:100},{name:'냉동 블루베리',kcal:29,p:0.4,c:7,f:0.2,g:50},{name:'달걀 2개',kcal:140,p:12,c:0,f:10,g:100},{name:'아몬드',kcal:240,p:8,c:8,f:20,g:40}],
+    '점심':[{name:'밥',kcal:325,p:5,c:71,f:0.5,g:250},{name:'닭가슴살',kcal:220,p:46,c:0,f:2.4,g:200},{name:'달걀',kcal:70,p:6,c:0,f:5,g:50}],
+    '저녁':[{name:'밥',kcal:260,p:4,c:57,f:0.4,g:200},{name:'닭가슴살',kcal:110,p:23,c:0,f:1.2,g:100},{name:'프로틴 2스쿱',kcal:200,p:40,c:6,f:3,g:50}]
+  }
+};
+
+let currentDate=new Date();
+let db={};
+let cfg={token:'',dbId:''};
+
+function dateKey(d){return d.toISOString().slice(0,10)}
+function formatDate(d){const days=['일','월','화','수','목','금','토'];return `${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`}
+function loadDB(){try{db=JSON.parse(localStorage.getItem(DB_KEY))||{}}catch(e){db={}}}
+function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db))}
+function loadCfg(){try{const s=JSON.parse(localStorage.getItem(CFG_KEY));if(s)cfg=s}catch(e){}}
+function saveCfg(){localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}
+function getRecord(d){return db[dateKey(d)]||{mode:'running',meals:{'아침':[],'점심':[],'저녁':[]},memo:''}}
+
+function changeDate(delta){
+  currentDate=new Date(currentDate);
+  currentDate.setDate(currentDate.getDate()+delta);
+  renderRecord();renderSummary();
+  document.querySelectorAll('.date-display').forEach(el=>el.textContent=formatDate(currentDate));
+}
+
+function showTab(tab){
+  ['record','summary','history','settings'].forEach(t=>{
+    document.getElementById('panel-'+t).style.display=t===tab?'':'none';
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='summary')renderSummary();
+  if(tab==='history')renderHistory();
+  if(tab==='settings')renderSettings();
+  if(tab==='record')checkSetup();
+}
+
+function checkSetup(){
+  const banner=document.getElementById('setup-banner');
+  banner.style.display=(!cfg.token||!cfg.dbId)?'block':'none';
+}
+
+function renderRecord(){
+  const rec=getRecord(currentDate);
+  document.getElementById('mode-select').value=rec.mode||'running';
+  document.getElementById('memo-input').value=rec.memo||'';
+  const container=document.getElementById('meals-container');
+  container.innerHTML='';
+  MEALS.forEach(meal=>{
+    const foods=rec.meals[meal]||[];
+    const block=document.createElement('div');
+    block.className='meal-block';block.dataset.meal=meal;
+    block.innerHTML=`<p class="meal-title">${meal}</p><div class="food-list"></div><button class="add-food-btn" onclick="addFoodRow('${meal}')">+ 음식 추가</button>`;
+    container.appendChild(block);
+    const list=block.querySelector('.food-list');
+    if(foods.length)foods.forEach(f=>addFoodRowData(list,f));
+    else addFoodRowData(list,{name:'',kcal:'',g:''});
+  });
+}
+
+function addFoodRow(meal){
+  const list=document.querySelector(`.meal-block[data-meal="${meal}"] .food-list`);
+  addFoodRowData(list,{name:'',kcal:'',g:''});
+}
+
+function addFoodRowData(list,food){
+  const row=document.createElement('div');
+  row.className='food-row';
+  row.innerHTML=`<input type="text" placeholder="음식명" value="${food.name||''}"><input type="number" class="w-g" placeholder="g" value="${food.g||''}"><input type="number" class="w-k" placeholder="kcal" value="${food.kcal||''}"><button class="del" onclick="this.parentElement.remove()">×</button>`;
+  list.appendChild(row);
+}
+
+function loadTemplate(){
+  const mode=document.getElementById('mode-select').value;
+  const tmpl=TMPL[mode];
+  const container=document.getElementById('meals-container');
+  container.innerHTML='';
+  MEALS.forEach(meal=>{
+    const block=document.createElement('div');
+    block.className='meal-block';block.dataset.meal=meal;
+    block.innerHTML=`<p class="meal-title">${meal}</p><div class="food-list"></div><button class="add-food-btn" onclick="addFoodRow('${meal}')">+ 음식 추가</button>`;
+    container.appendChild(block);
+    const list=block.querySelector('.food-list');
+    (tmpl[meal]||[]).forEach(f=>addFoodRowData(list,f));
+  });
+  showToast('record','식단 불러왔어 ✓','ok');
+}
+
+function collectRecord(){
+  const mode=document.getElementById('mode-select').value;
+  const memo=document.getElementById('memo-input').value;
+  const meals={};
+  MEALS.forEach(meal=>{
+    const rows=document.querySelectorAll(`.meal-block[data-meal="${meal}"] .food-row`);
+    meals[meal]=[];
+    rows.forEach(row=>{
+      const inputs=row.querySelectorAll('input');
+      const name=inputs[0].value.trim();
+      const g=parseFloat(inputs[1].value)||0;
+      const kcal=parseFloat(inputs[2].value)||0;
+      if(name)meals[meal].push({name,g,kcal});
+    });
+  });
+  return{mode,meals,memo};
+}
+
+function saveLocal(){
+  const rec=collectRecord();
+  db[dateKey(currentDate)]=rec;
+  saveDB();
+  showToast('record','저장됐어 ✓','ok');
+}
+
+async function saveNotion(){
+  if(!cfg.token||!cfg.dbId){showToast('record','⚙️ 설정 탭에서 토큰과 DB ID를 먼저 입력해줘','err');return}
+  const rec=collectRecord();
+  db[dateKey(currentDate)]=rec;
+  saveDB();
+  const totals=calcTotals(rec);
+  const mealText=MEALS.map(meal=>{
+    const foods=rec.meals[meal]||[];
+    if(!foods.length)return'';
+    return meal+': '+foods.map(f=>`${f.name}${f.g?' '+f.g+'g':''} ${f.kcal}kcal`).join(', ');
+  }).filter(Boolean).join('\n');
+  const body={parent:{database_id:cfg.dbId},properties:{
+    '날짜':{date:{start:dateKey(currentDate)}},
+    '모드':{select:{name:rec.mode==='gym'?'헬스 복귀 후':'러닝 기간'}},
+    '칼로리':{number:totals.kcal},
+    '단백질':{number:totals.p},
+    '탄수화물':{number:totals.c},
+    '지방':{number:totals.f},
+    '식사내역':{rich_text:[{text:{content:mealText}}]},
+    '메모':{rich_text:[{text:{content:rec.memo||''}}]}
+  }};
+  showToast('record','노션 저장 중...','ok');
+  try{
+    const res=await fetch('https://api.notion.com/v1/pages',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+cfg.token,'Content-Type':'application/json','Notion-Version':'2022-06-28'},
+      body:JSON.stringify(body)
+    });
+    if(res.ok){showToast('record','노션에 저장됐어 ✓','ok')}
+    else{const e=await res.json();showToast('record','저장 실패: '+(e.message||res.status),'err')}
+  }catch(e){showToast('record','오류: '+e.message,'err')}
+}
+
+function calcTotals(rec){
+  let kcal=0,p=0,c=0,f=0;
+  MEALS.forEach(meal=>(rec.meals[meal]||[]).forEach(food=>{kcal+=food.kcal||0;p+=food.p||0;c+=food.c||0;f+=food.f||0}));
+  return{kcal:Math.round(kcal),p:Math.round(p),c:Math.round(c),f:Math.round(f)};
+}
+
+function renderSummary(){
+  const rec=getRecord(currentDate);
+  const totals=calcTotals(rec);
+  const target=TARGETS[rec.mode||'running'];
+  document.getElementById('date-display2').textContent=formatDate(currentDate);
+  document.getElementById('nutrient-grid').innerHTML=`
+    <div class="nutrient-card"><div class="nutrient-label">칼로리</div><div class="nutrient-value">${totals.kcal}<span class="nutrient-unit"> kcal</span></div></div>
+    <div class="nutrient-card"><div class="nutrient-label">단백질</div><div class="nutrient-value">${totals.p}<span class="nutrient-unit"> g</span></div></div>
+    <div class="nutrient-card"><div class="nutrient-label">탄수화물</div><div class="nutrient-value">${totals.c}<span class="nutrient-unit"> g</span></div></div>
+    <div class="nutrient-card"><div class="nutrient-label">지방</div><div class="nutrient-value">${totals.f}<span class="nutrient-unit"> g</span></div></div>`;
+  const items=[{label:'칼로리',val:totals.kcal,target:target.kcal,unit:'kcal',cls:'pf-kcal'},{label:'단백질',val:totals.p,target:target.p,unit:'g',cls:'pf-protein'},{label:'탄수화물',val:totals.c,target:target.c,unit:'g',cls:'pf-carb'},{label:'지방',val:totals.f,target:target.f,unit:'g',cls:'pf-fat'}];
+  document.getElementById('progress-bars').innerHTML=items.map(item=>{
+    const pct=Math.min(100,Math.round((item.val/item.target)*100));
+    return`<div class="progress-bar-wrap"><div class="progress-info"><span>${item.label}</span><span>${item.val}${item.unit} / ${item.target}${item.unit} (${pct}%)</span></div><div class="progress-bg"><div class="progress-fill ${item.cls}" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+  document.getElementById('meal-summary').innerHTML=MEALS.map(meal=>{
+    const foods=rec.meals[meal]||[];
+    if(!foods.length)return'';
+    const mkcal=foods.reduce((s,f)=>s+(f.kcal||0),0);
+    return`<div style="margin-bottom:10px"><p style="font-size:12px;font-weight:600;color:#888;margin-bottom:4px">${meal} · ${Math.round(mkcal)}kcal</p>${foods.map(f=>`<p style="font-size:13px;color:#1a1a1a;padding:2px 0">${f.name}${f.g?' '+f.g+'g':''} · ${f.kcal||0}kcal</p>`).join('')}</div>`;
+  }).join('');
+  const memo=rec.memo||'';
+  const mc=document.getElementById('memo-summary-card');
+  if(memo){mc.style.display='';document.getElementById('memo-summary').textContent=memo}else mc.style.display='none';
+}
+
+function renderHistory(){
+  const keys=Object.keys(db).sort().reverse();
+  const list=document.getElementById('history-list');
+  if(!keys.length){list.innerHTML='<div class="empty-state">아직 기록이 없어</div>';return}
+  list.innerHTML=keys.map(key=>{
+    const rec=db[key];const totals=calcTotals(rec);
+    const d=new Date(key+'T00:00:00');
+    const days=['일','월','화','수','목','금','토'];
+    return`<div class="history-item" onclick="goToDate('${key}')"><div style="display:flex;justify-content:space-between"><span class="history-date">${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})</span><span style="font-size:11px;color:#bbb">${rec.mode==='gym'?'헬스 복귀':'러닝'}</span></div><p class="history-meta">${totals.kcal}kcal · 단백질 ${totals.p}g · 탄수화물 ${totals.c}g · 지방 ${totals.f}g</p>${rec.memo?`<p style="font-size:11px;color:#bbb;margin-top:2px">${rec.memo.slice(0,30)}${rec.memo.length>30?'...':''}</p>`:''}</div>`;
+  }).join('');
+}
+
+function goToDate(key){currentDate=new Date(key+'T00:00:00');showTab('summary')}
+
+function renderSettings(){
+  document.getElementById('token-input').value=cfg.token||'';
+  document.getElementById('dbid-input').value=cfg.dbId||'';
+}
+
+function saveSettings(){
+  cfg.token=document.getElementById('token-input').value.trim();
+  cfg.dbId=document.getElementById('dbid-input').value.trim();
+  saveCfg();
+  showToast('settings','설정 저장됐어 ✓','ok');
+  checkSetup();
+}
+
+function showToast(panel,msg,type){
+  const el=document.getElementById('toast-'+panel);
+  el.textContent=msg;el.className='toast '+type;
+  setTimeout(()=>{el.className='toast'},3500);
+}
+
+loadDB();loadCfg();checkSetup();
+renderRecord();
+document.querySelectorAll('.date-display').forEach(el=>el.textContent=formatDate(currentDate));
+</script>
+</body>
+</html>
