@@ -66,6 +66,12 @@
 - RLS로 유저별 데이터 완전 격리
 - 누구든 URL 접속 + 구글 로그인만 하면 바로 사용 가능
 
+**v7: PWA 설정**
+- manifest.json, sw.js, 아이콘 추가
+- 아이폰: Safari → 공유 버튼 → 홈 화면에 추가
+- 안드로이드: 브라우저 주소창 설치 버튼 또는 메뉴 → 앱 설치
+- 오프라인 캐싱 지원
+
 ### 기술 결정 기록
 
 | 결정 | 이유 |
@@ -74,6 +80,8 @@
 | GitHub Pages | 무료, 레포에 파일 올리면 자동 배포 |
 | Supabase (Firebase 아닌) | SQL 기반으로 구조 명확, RLS 설정 간단 |
 | 노션 연동 제거 | 멀티유저 환경에서 노션은 개인 토큰 필요, 확장 불가 |
+| PWA (React Native 아닌) | 지금 단계에서 빌드 환경 없이 앱처럼 설치 가능, 추후 앱스토어 배포 시 React Native로 전환 예정 |
+| diet-tracker 레포 분리 유지 | GitHub Pages URL 유지, Supabase 재설정 불필요, side-projects와 로컬에서만 같이 관리 |
 
 ### 트러블슈팅
 
@@ -94,13 +102,12 @@
 - **URL**: https://leehyeonhaeng.github.io/diet-tracker/diet-tracker.html
 - **DB**: Supabase (yvvntmgwmghnarsopgft)
 - **인증**: Google OAuth
+- **설치**: PWA (Safari → 홈 화면에 추가)
 
 ### 앞으로 추가할 것
 
 - [ ] 체중 기록 및 그래프
 - [ ] 주간/월간 영양소 통계
-- [ ] 음식 DB 클라우드 동기화
+- [ ] 음식 DB 클라우드 동기화 (현재는 브라우저 로컬)
 - [ ] 운동 기록 연동
-
----
-
+- [ ] 앱스토어/플레이스토어 배포 (React Native 전환)
