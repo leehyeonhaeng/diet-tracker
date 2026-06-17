@@ -8,37 +8,43 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh}
 .app{max-width:480px;margin:0 auto;padding:1rem}
-h1{font-size:18px;font-weight:600;margin-bottom:1rem;color:#1a1a1a}
+h1{font-size:18px;font-weight:600;margin-bottom:1rem}
 .tab-bar{display:flex;gap:6px;margin-bottom:1rem}
-.tab-bar button{flex:1;padding:8px;font-size:13px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;transition:all .15s}
+.tab-bar button{flex:1;padding:8px;font-size:13px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer}
 .tab-bar button.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
 .card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px}
 .section-label{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
 .meal-block{margin-bottom:1rem}
 .meal-title{font-size:13px;font-weight:600;color:#555;margin-bottom:6px}
-.food-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-.food-row input[type="text"]{flex:2;font-size:13px;padding:7px 9px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;min-width:0}
-.food-row input[type="number"]{font-size:13px;padding:7px 9px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;min-width:0}
-.food-row .w-g{width:52px;flex:none}
-.food-row .w-k{width:60px;flex:none}
-.food-row button.del{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;padding:2px;line-height:1;flex:none}
+.food-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;position:relative}
+.food-row .name-wrap{flex:2;position:relative;min-width:0}
+.food-row input.name{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa}
+.food-row input.gram{width:64px;flex:none;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;text-align:right}
+.food-row input.kcal-display{width:72px;flex:none;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #f0f0f0;background:#f0f0f0;text-align:right;color:#888}
+.food-row button.del{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;padding:2px;flex:none}
 .food-row button.del:hover{color:#e24b4a}
-.add-food-btn{font-size:12px;color:#888;background:none;border:1px dashed #ddd;border-radius:8px;padding:5px 10px;cursor:pointer;width:100%;margin-bottom:4px}
+.autocomplete{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e5e5e5;border-radius:8px;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.08);max-height:200px;overflow-y:auto;margin-top:2px}
+.autocomplete-item{padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid #f5f5f5;display:flex;justify-content:space-between;align-items:center}
+.autocomplete-item:last-child{border-bottom:none}
+.autocomplete-item:hover{background:#f5f5f5}
+.ac-name{font-weight:500;color:#1a1a1a}
+.ac-meta{font-size:11px;color:#aaa}
+.ac-badge{font-size:10px;background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:4px}
+.add-food-btn{font-size:12px;color:#888;background:none;border:1px dashed #ddd;border-radius:8px;padding:6px 10px;cursor:pointer;width:100%;margin-bottom:4px}
 .add-food-btn:hover{background:#f5f5f5}
 select{font-size:12px;border:1px solid #e5e5e5;border-radius:8px;padding:6px 8px;background:#fafafa;color:#1a1a1a;margin-bottom:12px;width:100%}
 .template-btn{font-size:12px;color:#555;background:none;border:1px solid #e5e5e5;border-radius:8px;padding:6px 10px;cursor:pointer;margin-bottom:12px;width:100%}
 .template-btn:hover{background:#f5f5f5}
 textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;color:#1a1a1a;resize:none;font-family:inherit;min-height:72px}
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.btn-row button{padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:1px solid #ddd;background:#fff;color:#1a1a1a;cursor:pointer;transition:all .15s}
+.btn-row button{padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:1px solid #ddd;background:#fff;color:#1a1a1a;cursor:pointer}
 .btn-row button:hover{background:#f5f5f5}
-.btn-row button:active{transform:scale(.98)}
 .btn-notion{border-color:#000!important;background:#000!important;color:#fff!important}
 .btn-notion:hover{background:#333!important}
 .nutrient-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .nutrient-card{background:#f5f5f5;border-radius:8px;padding:10px 12px}
 .nutrient-label{font-size:11px;color:#888;margin-bottom:4px}
-.nutrient-value{font-size:20px;font-weight:600;color:#1a1a1a}
+.nutrient-value{font-size:20px;font-weight:600}
 .nutrient-unit{font-size:11px;color:#aaa}
 .progress-bar-wrap{margin-bottom:10px}
 .progress-info{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px}
@@ -48,21 +54,39 @@ textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:1px
 .date-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
 .date-nav button{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:6px 12px;cursor:pointer;color:#555;font-size:13px}
 .date-nav button:hover{background:#f5f5f5}
-.date-display{font-size:14px;font-weight:600;color:#1a1a1a}
+.date-display{font-size:14px;font-weight:600}
 .history-item{border-bottom:1px solid #f0f0f0;padding:10px 0;cursor:pointer}
 .history-item:last-child{border-bottom:none}
 .history-item:hover{opacity:.7}
-.history-date{font-size:13px;font-weight:600;color:#1a1a1a}
+.history-date{font-size:13px;font-weight:600}
 .history-meta{font-size:12px;color:#888;margin-top:2px}
 .empty-state{text-align:center;padding:2rem 1rem;color:#bbb;font-size:13px}
 .toast{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:10px;display:none}
 .toast.ok{background:#e6f4ea;color:#1e7e34;display:block}
 .toast.err{background:#fdecea;color:#c62828;display:block}
-.token-input-wrap{display:flex;gap:8px;margin-bottom:10px}
-.token-input-wrap input{flex:1;font-size:12px;padding:7px 9px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa}
-.token-input-wrap button{font-size:12px;padding:7px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;white-space:nowrap}
+.input-row{display:grid;gap:6px;margin-bottom:8px}
+.input-row input{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;width:100%}
+.food-db-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
+.food-db-row:last-child{border-bottom:none}
+.food-db-name{font-weight:500;flex:1}
+.food-db-meta{font-size:11px;color:#aaa;margin-left:8px}
+.food-db-del{background:none;border:none;color:#ddd;cursor:pointer;font-size:16px;padding:2px 4px}
+.food-db-del:hover{color:#e24b4a}
 .setup-banner{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#795548;line-height:1.6}
 code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-family:monospace}
+.row-header{display:flex;gap:6px;margin-bottom:4px}
+.row-header span{font-size:11px;color:#aaa}
+.rh-name{flex:2;min-width:0}
+.rh-g{width:64px;flex:none;text-align:right}
+.rh-k{width:72px;flex:none;text-align:right}
+.rh-del{width:24px;flex:none}
+.token-input-wrap{display:flex;gap:8px;margin-bottom:10px}
+.token-input-wrap input{flex:1;font-size:12px;padding:7px 9px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa}
+.save-btn{width:100%;padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:none;background:#1a1a1a;color:#fff;cursor:pointer;margin-top:4px}
+.save-btn:hover{background:#333}
+.add-db-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.add-db-grid input{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;width:100%}
+.add-db-grid .full{grid-column:1/-1}
 </style>
 </head>
 <body>
@@ -76,9 +100,7 @@ code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-fa
   </div>
 
   <div id="panel-record">
-    <div id="setup-banner" class="setup-banner" style="display:none">
-      ⚠️ 노션 토큰이 설정되지 않았어. <strong>⚙️ 설정 탭</strong>에서 토큰과 DB ID를 입력해줘.
-    </div>
+    <div id="setup-banner" class="setup-banner" style="display:none">⚠️ <strong>⚙️ 설정 탭</strong>에서 노션 토큰과 DB ID를 입력해줘.</div>
     <div class="date-nav">
       <button onclick="changeDate(-1)">◀</button>
       <span class="date-display" id="date-display"></span>
@@ -132,20 +154,32 @@ code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-fa
   </div>
 
   <div id="panel-settings" style="display:none">
+
+    <div class="card">
+      <p class="section-label">내 음식 DB</p>
+      <p style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.6">음식 추가하면 자동완성이랑 칼로리 계산에 바로 반영돼. 100g 기준으로 입력해.</p>
+      <div class="add-db-grid">
+        <input type="text" id="db-name" placeholder="음식명" class="full">
+        <input type="number" id="db-kcal" placeholder="칼로리 (kcal/100g)">
+        <input type="number" id="db-p" placeholder="단백질 (g)">
+        <input type="number" id="db-c" placeholder="탄수화물 (g)">
+        <input type="number" id="db-f" placeholder="지방 (g)">
+      </div>
+      <button class="save-btn" onclick="addFoodToDB()" style="background:#1a1a1a">+ 음식 추가</button>
+      <div style="margin-top:16px" id="user-food-list"></div>
+      <div class="toast" id="toast-fooddb"></div>
+    </div>
+
     <div class="card">
       <p class="section-label">노션 연동 설정</p>
-      <p style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.6">토큰과 DB ID는 이 기기 브라우저에만 저장돼. 코드에 포함되지 않아서 안전해.</p>
       <p style="font-size:12px;color:#666;margin-bottom:6px;font-weight:600">Integration 토큰</p>
-      <div class="token-input-wrap">
-        <input type="password" id="token-input" placeholder="secret_xxx...">
-      </div>
+      <div class="token-input-wrap"><input type="password" id="token-input" placeholder="secret_xxx..."></div>
       <p style="font-size:12px;color:#666;margin-bottom:6px;font-weight:600">DB ID</p>
-      <div class="token-input-wrap">
-        <input type="text" id="dbid-input" placeholder="32자리 ID">
-      </div>
-      <button onclick="saveSettings()" style="width:100%;padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:1px solid #ddd;background:#1a1a1a;color:#fff;cursor:pointer;margin-top:4px">설정 저장</button>
+      <div class="token-input-wrap"><input type="text" id="dbid-input" placeholder="32자리 ID"></div>
+      <button class="save-btn" onclick="saveSettings()">설정 저장</button>
       <div class="toast" id="toast-settings"></div>
     </div>
+
     <div class="card">
       <p class="section-label">노션 DB 컬럼</p>
       <div style="font-size:12px;color:#666;line-height:2.2">
@@ -165,32 +199,68 @@ code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-fa
 <script>
 const DB_KEY='diet_v3';
 const CFG_KEY='diet_cfg';
+const USER_FOOD_KEY='diet_user_foods';
 const MEALS=['아침','점심','저녁'];
 const TARGETS={running:{kcal:1523,p:152,c:121,f:43},gym:{kcal:1733,p:154,c:153,f:43}};
+
+const BASE_FOOD_DB=[
+  {name:'그릭요거트',k100:59,p100:10,c100:4,f100:0.4},
+  {name:'냉동 블루베리',k100:57,p100:0.7,c100:14,f100:0.4},
+  {name:'블루베리',k100:57,p100:0.7,c100:14,f100:0.4},
+  {name:'달걀',k100:143,p100:12.6,c100:0.7,f100:9.5},
+  {name:'아몬드',k100:579,p100:21,c100:22,f100:50},
+  {name:'밥',k100:130,p100:2.7,c100:28,f100:0.3},
+  {name:'현미밥',k100:111,p100:2.6,c100:23,f100:0.9},
+  {name:'닭가슴살',k100:110,p100:23,c100:0,f100:1.2},
+  {name:'프로틴',k100:380,p100:75,c100:10,f100:5},
+  {name:'프로틴 1스쿱',k100:380,p100:75,c100:10,f100:5},
+  {name:'프로틴 2스쿱',k100:380,p100:75,c100:10,f100:5},
+  {name:'오트밀',k100:389,p100:17,c100:66,f100:7},
+  {name:'바나나',k100:89,p100:1.1,c100:23,f100:0.3},
+  {name:'사과',k100:52,p100:0.3,c100:14,f100:0.2},
+  {name:'고구마',k100:86,p100:1.6,c100:20,f100:0.1},
+  {name:'두부',k100:76,p100:8,c100:2,f100:4},
+  {name:'연어',k100:208,p100:20,c100:0,f100:13},
+  {name:'소고기',k100:250,p100:26,c100:0,f100:17},
+  {name:'돼지고기',k100:242,p100:27,c100:0,f100:14},
+  {name:'참치캔',k100:116,p100:26,c100:0,f100:1},
+  {name:'우유',k100:61,p100:3.2,c100:4.8,f100:3.3},
+  {name:'올리브오일',k100:884,p100:0,c100:0,f100:100},
+  {name:'아보카도',k100:160,p100:2,c100:9,f100:15},
+  {name:'브로콜리',k100:34,p100:2.8,c100:7,f100:0.4},
+  {name:'계란흰자',k100:52,p100:11,c100:0.7,f100:0.2},
+];
+
 const TMPL={
   running:{
-    '아침':[{name:'그릭요거트',kcal:59,p:10,c:4,f:0.4,g:100},{name:'냉동 블루베리',kcal:29,p:0.4,c:7,f:0.2,g:50},{name:'달걀 2개',kcal:140,p:12,c:0,f:10,g:100},{name:'아몬드',kcal:240,p:8,c:8,f:20,g:40}],
-    '점심':[{name:'밥',kcal:260,p:4,c:57,f:0.4,g:200},{name:'닭가슴살',kcal:220,p:46,c:0,f:2.4,g:200},{name:'달걀',kcal:70,p:6,c:0,f:5,g:50}],
-    '저녁':[{name:'밥',kcal:195,p:3,c:43,f:0.3,g:150},{name:'닭가슴살',kcal:110,p:23,c:0,f:1.2,g:100},{name:'프로틴 2스쿱',kcal:200,p:40,c:6,f:3,g:50}]
+    '아침':[{name:'그릭요거트',g:100},{name:'냉동 블루베리',g:50},{name:'달걀',g:100},{name:'아몬드',g:40}],
+    '점심':[{name:'밥',g:200},{name:'닭가슴살',g:200},{name:'달걀',g:50}],
+    '저녁':[{name:'밥',g:150},{name:'닭가슴살',g:100},{name:'프로틴 2스쿱',g:50}]
   },
   gym:{
-    '아침':[{name:'그릭요거트',kcal:59,p:10,c:4,f:0.4,g:100},{name:'냉동 블루베리',kcal:29,p:0.4,c:7,f:0.2,g:50},{name:'달걀 2개',kcal:140,p:12,c:0,f:10,g:100},{name:'아몬드',kcal:240,p:8,c:8,f:20,g:40}],
-    '점심':[{name:'밥',kcal:325,p:5,c:71,f:0.5,g:250},{name:'닭가슴살',kcal:220,p:46,c:0,f:2.4,g:200},{name:'달걀',kcal:70,p:6,c:0,f:5,g:50}],
-    '저녁':[{name:'밥',kcal:260,p:4,c:57,f:0.4,g:200},{name:'닭가슴살',kcal:110,p:23,c:0,f:1.2,g:100},{name:'프로틴 2스쿱',kcal:200,p:40,c:6,f:3,g:50}]
+    '아침':[{name:'그릭요거트',g:100},{name:'냉동 블루베리',g:50},{name:'달걀',g:100},{name:'아몬드',g:40}],
+    '점심':[{name:'밥',g:250},{name:'닭가슴살',g:200},{name:'달걀',g:50}],
+    '저녁':[{name:'밥',g:200},{name:'닭가슴살',g:100},{name:'프로틴 2스쿱',g:50}]
   }
 };
 
 let currentDate=new Date();
-let db={};
+let dietDB={};
 let cfg={token:'',dbId:''};
+let userFoods=[];
+
+function getAllFoods(){return[...userFoods.map(f=>({...f,isUser:true})),...BASE_FOOD_DB];}
+function findFood(name){return getAllFoods().find(f=>f.name===name)}
 
 function dateKey(d){return d.toISOString().slice(0,10)}
-function formatDate(d){const days=['일','월','화','수','목','금','토'];return `${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`}
-function loadDB(){try{db=JSON.parse(localStorage.getItem(DB_KEY))||{}}catch(e){db={}}}
-function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db))}
+function formatDate(d){const days=['일','월','화','수','목','금','토'];return`${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`}
+function loadDietDB(){try{dietDB=JSON.parse(localStorage.getItem(DB_KEY))||{}}catch(e){dietDB={}}}
+function saveDietDB(){localStorage.setItem(DB_KEY,JSON.stringify(dietDB))}
 function loadCfg(){try{const s=JSON.parse(localStorage.getItem(CFG_KEY));if(s)cfg=s}catch(e){}}
 function saveCfg(){localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}
-function getRecord(d){return db[dateKey(d)]||{mode:'running',meals:{'아침':[],'점심':[],'저녁':[]},memo:''}}
+function loadUserFoods(){try{userFoods=JSON.parse(localStorage.getItem(USER_FOOD_KEY))||[]}catch(e){userFoods=[]}}
+function saveUserFoods(){localStorage.setItem(USER_FOOD_KEY,JSON.stringify(userFoods))}
+function getRecord(d){return dietDB[dateKey(d)]||{mode:'running',meals:{'아침':[],'점심':[],'저녁':[]},memo:''}}
 
 function changeDate(delta){
   currentDate=new Date(currentDate);
@@ -206,13 +276,12 @@ function showTab(tab){
   });
   if(tab==='summary')renderSummary();
   if(tab==='history')renderHistory();
-  if(tab==='settings')renderSettings();
+  if(tab==='settings'){renderSettings();renderUserFoodList();}
   if(tab==='record')checkSetup();
 }
 
 function checkSetup(){
-  const banner=document.getElementById('setup-banner');
-  banner.style.display=(!cfg.token||!cfg.dbId)?'block':'none';
+  document.getElementById('setup-banner').style.display=(!cfg.token||!cfg.dbId)?'block':'none';
 }
 
 function renderRecord(){
@@ -225,7 +294,7 @@ function renderRecord(){
     const foods=rec.meals[meal]||[];
     const block=document.createElement('div');
     block.className='meal-block';block.dataset.meal=meal;
-    block.innerHTML=`<p class="meal-title">${meal}</p><div class="food-list"></div><button class="add-food-btn" onclick="addFoodRow('${meal}')">+ 음식 추가</button>`;
+    block.innerHTML=`<p class="meal-title">${meal}</p><div class="row-header"><span class="rh-name">음식명</span><span class="rh-g">g</span><span class="rh-k">kcal</span><span class="rh-del"></span></div><div class="food-list"></div><button class="add-food-btn" onclick="addFoodRow('${meal}')">+ 음식 추가</button>`;
     container.appendChild(block);
     const list=block.querySelector('.food-list');
     if(foods.length)foods.forEach(f=>addFoodRowData(list,f));
@@ -241,8 +310,66 @@ function addFoodRow(meal){
 function addFoodRowData(list,food){
   const row=document.createElement('div');
   row.className='food-row';
-  row.innerHTML=`<input type="text" placeholder="음식명" value="${food.name||''}"><input type="number" class="w-g" placeholder="g" value="${food.g||''}"><input type="number" class="w-k" placeholder="kcal" value="${food.kcal||''}"><button class="del" onclick="this.parentElement.remove()">×</button>`;
+  const kcalVal=food.kcal?Math.round(food.kcal):'';
+  row.innerHTML=`
+    <div class="name-wrap">
+      <input type="text" class="name" placeholder="음식명" value="${food.name||''}" autocomplete="off">
+      <div class="autocomplete" style="display:none"></div>
+    </div>
+    <input type="number" class="gram" placeholder="g" value="${food.g||''}">
+    <input type="number" class="kcal-display" placeholder="kcal" value="${kcalVal}" readonly>
+    <button class="del" onclick="this.parentElement.remove()">×</button>`;
   list.appendChild(row);
+
+  const nameInput=row.querySelector('.name');
+  const gramInput=row.querySelector('.gram');
+  const kcalInput=row.querySelector('.kcal-display');
+  const acDiv=row.querySelector('.autocomplete');
+
+  // 기존 저장 데이터면 food DB 매칭
+  if(food.name){
+    const match=findFood(food.name);
+    if(match){row._food=match;}
+    else{row._kcalPer100=food.kcal&&food.g?(food.kcal/food.g*100):null;}
+  }
+
+  nameInput.addEventListener('input',()=>{
+    const q=nameInput.value.trim().toLowerCase();
+    if(!q){acDiv.style.display='none';return}
+    const all=getAllFoods();
+    const matches=all.filter(f=>f.name.toLowerCase().includes(q)).slice(0,8);
+    if(!matches.length){acDiv.style.display='none';return}
+    acDiv.innerHTML=matches.map(f=>`
+      <div class="autocomplete-item" data-name="${f.name}">
+        <div><div class="ac-name">${f.name}</div><div class="ac-meta">${f.k100}kcal / 100g · 단백질 ${f.p100}g</div></div>
+        ${f.isUser?'<span class="ac-badge">내 DB</span>':''}
+      </div>`).join('');
+    acDiv.style.display='block';
+    acDiv.querySelectorAll('.autocomplete-item').forEach(item=>{
+      item.addEventListener('mousedown',e=>{
+        e.preventDefault();
+        const name=item.dataset.name;
+        nameInput.value=name;
+        row._food=findFood(name);
+        acDiv.style.display='none';
+        recalcKcal(row);
+        gramInput.focus();
+      });
+    });
+  });
+
+  nameInput.addEventListener('blur',()=>setTimeout(()=>acDiv.style.display='none',150));
+  gramInput.addEventListener('input',()=>recalcKcal(row));
+}
+
+function recalcKcal(row){
+  const g=parseFloat(row.querySelector('.gram').value)||0;
+  const kcalInput=row.querySelector('.kcal-display');
+  if(row._food&&g>0){
+    kcalInput.value=Math.round(row._food.k100*g/100);
+  } else if(!g){
+    kcalInput.value='';
+  }
 }
 
 function loadTemplate(){
@@ -253,10 +380,14 @@ function loadTemplate(){
   MEALS.forEach(meal=>{
     const block=document.createElement('div');
     block.className='meal-block';block.dataset.meal=meal;
-    block.innerHTML=`<p class="meal-title">${meal}</p><div class="food-list"></div><button class="add-food-btn" onclick="addFoodRow('${meal}')">+ 음식 추가</button>`;
+    block.innerHTML=`<p class="meal-title">${meal}</p><div class="row-header"><span class="rh-name">음식명</span><span class="rh-g">g</span><span class="rh-k">kcal</span><span class="rh-del"></span></div><div class="food-list"></div><button class="add-food-btn" onclick="addFoodRow('${meal}')">+ 음식 추가</button>`;
     container.appendChild(block);
     const list=block.querySelector('.food-list');
-    (tmpl[meal]||[]).forEach(f=>addFoodRowData(list,f));
+    (tmpl[meal]||[]).forEach(f=>{
+      const match=findFood(f.name);
+      const kcal=match?Math.round(match.k100*f.g/100):0;
+      addFoodRowData(list,{name:f.name,g:f.g,kcal});
+    });
   });
   showToast('record','식단 불러왔어 ✓','ok');
 }
@@ -269,11 +400,14 @@ function collectRecord(){
     const rows=document.querySelectorAll(`.meal-block[data-meal="${meal}"] .food-row`);
     meals[meal]=[];
     rows.forEach(row=>{
-      const inputs=row.querySelectorAll('input');
-      const name=inputs[0].value.trim();
-      const g=parseFloat(inputs[1].value)||0;
-      const kcal=parseFloat(inputs[2].value)||0;
-      if(name)meals[meal].push({name,g,kcal});
+      const name=row.querySelector('.name').value.trim();
+      const g=parseFloat(row.querySelector('.gram').value)||0;
+      const kcal=parseFloat(row.querySelector('.kcal-display').value)||0;
+      const fd=row._food;
+      const p=fd?Math.round(fd.p100*g/100*10)/10:0;
+      const c=fd?Math.round(fd.c100*g/100*10)/10:0;
+      const f=fd?Math.round(fd.f100*g/100*10)/10:0;
+      if(name)meals[meal].push({name,g,kcal,p,c,f});
     });
   });
   return{mode,meals,memo};
@@ -281,16 +415,16 @@ function collectRecord(){
 
 function saveLocal(){
   const rec=collectRecord();
-  db[dateKey(currentDate)]=rec;
-  saveDB();
+  dietDB[dateKey(currentDate)]=rec;
+  saveDietDB();
   showToast('record','저장됐어 ✓','ok');
 }
 
 async function saveNotion(){
   if(!cfg.token||!cfg.dbId){showToast('record','⚙️ 설정 탭에서 토큰과 DB ID를 먼저 입력해줘','err');return}
   const rec=collectRecord();
-  db[dateKey(currentDate)]=rec;
-  saveDB();
+  dietDB[dateKey(currentDate)]=rec;
+  saveDietDB();
   const totals=calcTotals(rec);
   const mealText=MEALS.map(meal=>{
     const foods=rec.meals[meal]||[];
@@ -314,7 +448,7 @@ async function saveNotion(){
       headers:{'Authorization':'Bearer '+cfg.token,'Content-Type':'application/json','Notion-Version':'2022-06-28'},
       body:JSON.stringify(body)
     });
-    if(res.ok){showToast('record','노션에 저장됐어 ✓','ok')}
+    if(res.ok)showToast('record','노션에 저장됐어 ✓','ok');
     else{const e=await res.json();showToast('record','저장 실패: '+(e.message||res.status),'err')}
   }catch(e){showToast('record','오류: '+e.message,'err')}
 }
@@ -344,7 +478,7 @@ function renderSummary(){
     const foods=rec.meals[meal]||[];
     if(!foods.length)return'';
     const mkcal=foods.reduce((s,f)=>s+(f.kcal||0),0);
-    return`<div style="margin-bottom:10px"><p style="font-size:12px;font-weight:600;color:#888;margin-bottom:4px">${meal} · ${Math.round(mkcal)}kcal</p>${foods.map(f=>`<p style="font-size:13px;color:#1a1a1a;padding:2px 0">${f.name}${f.g?' '+f.g+'g':''} · ${f.kcal||0}kcal</p>`).join('')}</div>`;
+    return`<div style="margin-bottom:10px"><p style="font-size:12px;font-weight:600;color:#888;margin-bottom:4px">${meal} · ${Math.round(mkcal)}kcal</p>${foods.map(f=>`<p style="font-size:13px;padding:2px 0">${f.name}${f.g?' '+f.g+'g':''} · ${f.kcal||0}kcal</p>`).join('')}</div>`;
   }).join('');
   const memo=rec.memo||'';
   const mc=document.getElementById('memo-summary-card');
@@ -352,11 +486,11 @@ function renderSummary(){
 }
 
 function renderHistory(){
-  const keys=Object.keys(db).sort().reverse();
+  const keys=Object.keys(dietDB).sort().reverse();
   const list=document.getElementById('history-list');
   if(!keys.length){list.innerHTML='<div class="empty-state">아직 기록이 없어</div>';return}
   list.innerHTML=keys.map(key=>{
-    const rec=db[key];const totals=calcTotals(rec);
+    const rec=dietDB[key];const totals=calcTotals(rec);
     const d=new Date(key+'T00:00:00');
     const days=['일','월','화','수','목','금','토'];
     return`<div class="history-item" onclick="goToDate('${key}')"><div style="display:flex;justify-content:space-between"><span class="history-date">${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})</span><span style="font-size:11px;color:#bbb">${rec.mode==='gym'?'헬스 복귀':'러닝'}</span></div><p class="history-meta">${totals.kcal}kcal · 단백질 ${totals.p}g · 탄수화물 ${totals.c}g · 지방 ${totals.f}g</p>${rec.memo?`<p style="font-size:11px;color:#bbb;margin-top:2px">${rec.memo.slice(0,30)}${rec.memo.length>30?'...':''}</p>`:''}</div>`;
@@ -364,6 +498,38 @@ function renderHistory(){
 }
 
 function goToDate(key){currentDate=new Date(key+'T00:00:00');showTab('summary')}
+
+function addFoodToDB(){
+  const name=document.getElementById('db-name').value.trim();
+  const k100=parseFloat(document.getElementById('db-kcal').value);
+  const p100=parseFloat(document.getElementById('db-p').value)||0;
+  const c100=parseFloat(document.getElementById('db-c').value)||0;
+  const f100=parseFloat(document.getElementById('db-f').value)||0;
+  if(!name||!k100){showToast('fooddb','음식명이랑 칼로리는 필수야','err');return}
+  if(getAllFoods().find(f=>f.name===name)){showToast('fooddb','같은 이름 음식이 이미 있어','err');return}
+  userFoods.unshift({name,k100,p100,c100,f100});
+  saveUserFoods();
+  document.getElementById('db-name').value='';
+  document.getElementById('db-kcal').value='';
+  document.getElementById('db-p').value='';
+  document.getElementById('db-c').value='';
+  document.getElementById('db-f').value='';
+  renderUserFoodList();
+  showToast('fooddb',`"${name}" 추가됐어 ✓`,'ok');
+}
+
+function deleteFoodFromDB(name){
+  userFoods=userFoods.filter(f=>f.name!==name);
+  saveUserFoods();
+  renderUserFoodList();
+}
+
+function renderUserFoodList(){
+  const el=document.getElementById('user-food-list');
+  if(!userFoods.length){el.innerHTML='<p style="font-size:12px;color:#bbb;text-align:center;padding:8px">아직 추가한 음식이 없어</p>';return}
+  el.innerHTML=`<p class="section-label" style="margin-bottom:8px">저장된 내 음식 (${userFoods.length}개)</p>`+
+    userFoods.map(f=>`<div class="food-db-row"><span class="food-db-name">${f.name}</span><span class="food-db-meta">${f.k100}kcal · 단백질 ${f.p100}g / 100g</span><button class="food-db-del" onclick="deleteFoodFromDB('${f.name}')">×</button></div>`).join('');
+}
 
 function renderSettings(){
   document.getElementById('token-input').value=cfg.token||'';
@@ -381,10 +547,10 @@ function saveSettings(){
 function showToast(panel,msg,type){
   const el=document.getElementById('toast-'+panel);
   el.textContent=msg;el.className='toast '+type;
-  setTimeout(()=>{el.className='toast'},3500);
+  setTimeout(()=>el.className='toast',3500);
 }
 
-loadDB();loadCfg();checkSetup();
+loadDietDB();loadCfg();loadUserFoods();checkSetup();
 renderRecord();
 document.querySelectorAll('.date-display').forEach(el=>el.textContent=formatDate(currentDate));
 </script>
