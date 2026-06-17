@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>식단 기록</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh}
@@ -39,8 +40,8 @@ textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:1px
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .btn-row button{padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:1px solid #ddd;background:#fff;color:#1a1a1a;cursor:pointer}
 .btn-row button:hover{background:#f5f5f5}
-.btn-notion{border-color:#000!important;background:#000!important;color:#fff!important}
-.btn-notion:hover{background:#333!important}
+.btn-primary{border-color:#000!important;background:#000!important;color:#fff!important}
+.btn-primary:hover{background:#333!important}
 .nutrient-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .nutrient-card{background:#f5f5f5;border-radius:8px;padding:10px 12px}
 .nutrient-label{font-size:11px;color:#888;margin-bottom:4px}
@@ -64,33 +65,61 @@ textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:1px
 .toast{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:10px;display:none}
 .toast.ok{background:#e6f4ea;color:#1e7e34;display:block}
 .toast.err{background:#fdecea;color:#c62828;display:block}
-.input-row{display:grid;gap:6px;margin-bottom:8px}
-.input-row input{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;width:100%}
-.food-db-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
-.food-db-row:last-child{border-bottom:none}
-.food-db-name{font-weight:500;flex:1}
-.food-db-meta{font-size:11px;color:#aaa;margin-left:8px}
-.food-db-del{background:none;border:none;color:#ddd;cursor:pointer;font-size:16px;padding:2px 4px}
-.food-db-del:hover{color:#e24b4a}
-.setup-banner{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#795548;line-height:1.6}
-code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-family:monospace}
 .row-header{display:flex;gap:6px;margin-bottom:4px}
 .row-header span{font-size:11px;color:#aaa}
 .rh-name{flex:2;min-width:0}
 .rh-g{width:64px;flex:none;text-align:right}
 .rh-k{width:72px;flex:none;text-align:right}
 .rh-del{width:24px;flex:none}
-.token-input-wrap{display:flex;gap:8px;margin-bottom:10px}
-.token-input-wrap input{flex:1;font-size:12px;padding:7px 9px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa}
-.save-btn{width:100%;padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:none;background:#1a1a1a;color:#fff;cursor:pointer;margin-top:4px}
-.save-btn:hover{background:#333}
 .add-db-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
 .add-db-grid input{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fafafa;width:100%}
 .add-db-grid .full{grid-column:1/-1}
+.food-db-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
+.food-db-row:last-child{border-bottom:none}
+.food-db-name{font-weight:500;flex:1}
+.food-db-meta{font-size:11px;color:#aaa;margin-left:8px}
+.food-db-del{background:none;border:none;color:#ddd;cursor:pointer;font-size:16px;padding:2px 4px}
+.food-db-del:hover{color:#e24b4a}
+.save-btn{width:100%;padding:10px;font-size:13px;font-weight:600;border-radius:8px;border:none;background:#1a1a1a;color:#fff;cursor:pointer;margin-top:4px}
+.save-btn:hover{background:#333}
+code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-family:monospace}
+
+/* 로그인 화면 */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f5f5}
+.login-card{background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:2rem;width:100%;max-width:360px;text-align:center}
+.login-card h2{font-size:20px;font-weight:600;margin-bottom:8px}
+.login-card p{font-size:13px;color:#888;margin-bottom:24px;line-height:1.6}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;font-size:14px;font-weight:500;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;transition:all .15s}
+.google-btn:hover{background:#f5f5f5}
+.google-btn img{width:18px;height:18px}
+.user-info{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f5f5f5;border-radius:8px;margin-bottom:12px;font-size:13px}
+.user-email{color:#555;font-size:12px}
+.logout-btn{background:none;border:none;color:#aaa;cursor:pointer;font-size:12px}
+.logout-btn:hover{color:#e24b4a}
+.saving-indicator{font-size:12px;color:#aaa;text-align:center;padding:4px}
 </style>
 </head>
 <body>
+
+<!-- 로그인 화면 -->
+<div id="login-screen" style="display:none">
+  <div class="login-card">
+    <h2>🥗 식단 기록</h2>
+    <p>구글 계정으로 로그인하면<br>어디서든 기록을 볼 수 있어.</p>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <img src="https://www.google.com/favicon.ico" alt="Google">
+      Google로 로그인
+    </button>
+  </div>
+</div>
+
+<!-- 메인 앱 -->
+<div id="main-app" style="display:none">
 <div class="app">
+  <div class="user-info">
+    <span class="user-email" id="user-email"></span>
+    <button class="logout-btn" onclick="signOut()">로그아웃</button>
+  </div>
   <h1>식단 기록</h1>
   <div class="tab-bar">
     <button class="active" onclick="showTab('record')" id="tab-record">기록</button>
@@ -100,7 +129,6 @@ code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-fa
   </div>
 
   <div id="panel-record">
-    <div id="setup-banner" class="setup-banner" style="display:none">⚠️ <strong>⚙️ 설정 탭</strong>에서 노션 토큰과 DB ID를 입력해줘.</div>
     <div class="date-nav">
       <button onclick="changeDate(-1)">◀</button>
       <span class="date-display" id="date-display"></span>
@@ -118,8 +146,8 @@ code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-fa
         <textarea id="memo-input" placeholder="컨디션, 운동 강도 등..."></textarea>
       </div>
       <div class="btn-row">
-        <button onclick="saveLocal()">💾 저장</button>
-        <button class="btn-notion" onclick="saveNotion()">N 노션 저장</button>
+        <button onclick="saveRecord()">💾 저장</button>
+        <button class="btn-primary" onclick="saveRecord(true)">☁️ 클라우드 저장</button>
       </div>
       <div class="toast" id="toast-record"></div>
     </div>
@@ -154,7 +182,6 @@ code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-fa
   </div>
 
   <div id="panel-settings" style="display:none">
-
     <div class="card">
       <p class="section-label">내 음식 DB</p>
       <p style="font-size:12px;color:#888;margin-bottom:12px;line-height:1.6">음식 추가하면 자동완성이랑 칼로리 계산에 바로 반영돼. 100g 기준으로 입력해.</p>
@@ -165,40 +192,19 @@ code{font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:4px;font-fa
         <input type="number" id="db-c" placeholder="탄수화물 (g)">
         <input type="number" id="db-f" placeholder="지방 (g)">
       </div>
-      <button class="save-btn" onclick="addFoodToDB()" style="background:#1a1a1a">+ 음식 추가</button>
+      <button class="save-btn" onclick="addFoodToDB()">+ 음식 추가</button>
       <div style="margin-top:16px" id="user-food-list"></div>
       <div class="toast" id="toast-fooddb"></div>
     </div>
-
-    <div class="card">
-      <p class="section-label">노션 연동 설정</p>
-      <p style="font-size:12px;color:#666;margin-bottom:6px;font-weight:600">Integration 토큰</p>
-      <div class="token-input-wrap"><input type="password" id="token-input" placeholder="secret_xxx..."></div>
-      <p style="font-size:12px;color:#666;margin-bottom:6px;font-weight:600">DB ID</p>
-      <div class="token-input-wrap"><input type="text" id="dbid-input" placeholder="32자리 ID"></div>
-      <button class="save-btn" onclick="saveSettings()">설정 저장</button>
-      <div class="toast" id="toast-settings"></div>
-    </div>
-
-    <div class="card">
-      <p class="section-label">노션 DB 컬럼</p>
-      <div style="font-size:12px;color:#666;line-height:2.2">
-        <div><code>날짜</code> — Date</div>
-        <div><code>모드</code> — Select</div>
-        <div><code>칼로리</code> — Number</div>
-        <div><code>단백질</code> — Number</div>
-        <div><code>탄수화물</code> — Number</div>
-        <div><code>지방</code> — Number</div>
-        <div><code>식사내역</code> — Text</div>
-        <div><code>메모</code> — Text</div>
-      </div>
-    </div>
   </div>
+</div>
 </div>
 
 <script>
-const DB_KEY='diet_v3';
-const CFG_KEY='diet_cfg';
+const SUPABASE_URL='https://yvvntmgwmghnarsopgft.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2dm50bWd3bWdobmFyc29wZ2Z0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MzA1OTIsImV4cCI6MjA5NzIwNjU5Mn0.Dje84idoOcofPtURwSkSaNCzCVWxRfpS8iFC05uRXJ8';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+
 const USER_FOOD_KEY='diet_user_foods';
 const MEALS=['아침','점심','저녁'];
 const TARGETS={running:{kcal:1523,p:152,c:121,f:43},gym:{kcal:1733,p:154,c:153,f:43}};
@@ -245,23 +251,56 @@ const TMPL={
 };
 
 let currentDate=new Date();
-let dietDB={};
-let cfg={token:'',dbId:''};
+let currentUser=null;
+let localRecords={};
 let userFoods=[];
 
-function getAllFoods(){return[...userFoods.map(f=>({...f,isUser:true})),...BASE_FOOD_DB];}
+function getAllFoods(){return[...userFoods.map(f=>({...f,isUser:true})),...BASE_FOOD_DB]}
 function findFood(name){return getAllFoods().find(f=>f.name===name)}
-
 function dateKey(d){return d.toISOString().slice(0,10)}
 function formatDate(d){const days=['일','월','화','수','목','금','토'];return`${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`}
-function loadDietDB(){try{dietDB=JSON.parse(localStorage.getItem(DB_KEY))||{}}catch(e){dietDB={}}}
-function saveDietDB(){localStorage.setItem(DB_KEY,JSON.stringify(dietDB))}
-function loadCfg(){try{const s=JSON.parse(localStorage.getItem(CFG_KEY));if(s)cfg=s}catch(e){}}
-function saveCfg(){localStorage.setItem(CFG_KEY,JSON.stringify(cfg))}
-function loadUserFoods(){try{userFoods=JSON.parse(localStorage.getItem(USER_FOOD_KEY))||[]}catch(e){userFoods=[]}}
-function saveUserFoods(){localStorage.setItem(USER_FOOD_KEY,JSON.stringify(userFoods))}
-function getRecord(d){return dietDB[dateKey(d)]||{mode:'running',meals:{'아침':[],'점심':[],'저녁':[]},memo:''}}
+function loadUserFoods(){try{userFoods=JSON.parse(localStorage.getItem(USER_FOOD_KEY+'-'+(currentUser?.id||'')))||[]}catch(e){userFoods=[]}}
+function saveUserFoods(){localStorage.setItem(USER_FOOD_KEY+'-'+(currentUser?.id||''),JSON.stringify(userFoods))}
 
+// 인증
+async function signInWithGoogle(){
+  await sb.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:window.location.href}
+  });
+}
+
+async function signOut(){
+  await sb.auth.signOut();
+  currentUser=null;
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+}
+
+async function initAuth(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    showApp();
+  } else {
+    document.getElementById('login-screen').style.display='flex';
+  }
+  sb.auth.onAuthStateChange((event,session)=>{
+    if(session){currentUser=session.user;showApp();}
+    else{currentUser=null;document.getElementById('main-app').style.display='none';document.getElementById('login-screen').style.display='flex';}
+  });
+}
+
+function showApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('user-email').textContent=currentUser.email;
+  loadUserFoods();
+  renderRecord();
+  document.querySelectorAll('.date-display').forEach(el=>el.textContent=formatDate(currentDate));
+}
+
+// 날짜
 function changeDate(delta){
   currentDate=new Date(currentDate);
   currentDate.setDate(currentDate.getDate()+delta);
@@ -276,16 +315,40 @@ function showTab(tab){
   });
   if(tab==='summary')renderSummary();
   if(tab==='history')renderHistory();
-  if(tab==='settings'){renderSettings();renderUserFoodList();}
-  if(tab==='record')checkSetup();
+  if(tab==='settings')renderUserFoodList();
 }
 
-function checkSetup(){
-  document.getElementById('setup-banner').style.display=(!cfg.token||!cfg.dbId)?'block':'none';
+// Supabase CRUD
+async function fetchRecord(date){
+  const{data}=await sb.from('diet_records').select('*').eq('user_id',currentUser.id).eq('date',date).single();
+  return data;
 }
 
-function renderRecord(){
-  const rec=getRecord(currentDate);
+async function upsertRecord(rec,date){
+  const{error}=await sb.from('diet_records').upsert({
+    user_id:currentUser.id,
+    date:date,
+    mode:rec.mode,
+    meals:rec.meals,
+    memo:rec.memo||''
+  },{onConflict:'user_id,date'});
+  return!error;
+}
+
+async function fetchAllRecords(){
+  const{data}=await sb.from('diet_records').select('*').eq('user_id',currentUser.id).order('date',{ascending:false});
+  return data||[];
+}
+
+// 기록 렌더
+async function renderRecord(){
+  const key=dateKey(currentDate);
+  let rec=localRecords[key];
+  if(!rec){
+    const remote=await fetchRecord(key);
+    rec=remote||{mode:'running',meals:{'아침':[],'점심':[],'저녁':[]},memo:''};
+    localRecords[key]=rec;
+  }
   document.getElementById('mode-select').value=rec.mode||'running';
   document.getElementById('memo-input').value=rec.memo||'';
   const container=document.getElementById('meals-container');
@@ -320,44 +383,28 @@ function addFoodRowData(list,food){
     <input type="number" class="kcal-display" placeholder="kcal" value="${kcalVal}" readonly>
     <button class="del" onclick="this.parentElement.remove()">×</button>`;
   list.appendChild(row);
-
   const nameInput=row.querySelector('.name');
   const gramInput=row.querySelector('.gram');
-  const kcalInput=row.querySelector('.kcal-display');
   const acDiv=row.querySelector('.autocomplete');
-
-  // 기존 저장 데이터면 food DB 매칭
-  if(food.name){
-    const match=findFood(food.name);
-    if(match){row._food=match;}
-    else{row._kcalPer100=food.kcal&&food.g?(food.kcal/food.g*100):null;}
-  }
-
+  if(food.name){const match=findFood(food.name);if(match)row._food=match;}
   nameInput.addEventListener('input',()=>{
     const q=nameInput.value.trim().toLowerCase();
     if(!q){acDiv.style.display='none';return}
-    const all=getAllFoods();
-    const matches=all.filter(f=>f.name.toLowerCase().includes(q)).slice(0,8);
+    const matches=getAllFoods().filter(f=>f.name.toLowerCase().includes(q)).slice(0,8);
     if(!matches.length){acDiv.style.display='none';return}
-    acDiv.innerHTML=matches.map(f=>`
-      <div class="autocomplete-item" data-name="${f.name}">
-        <div><div class="ac-name">${f.name}</div><div class="ac-meta">${f.k100}kcal / 100g · 단백질 ${f.p100}g</div></div>
-        ${f.isUser?'<span class="ac-badge">내 DB</span>':''}
-      </div>`).join('');
+    acDiv.innerHTML=matches.map(f=>`<div class="autocomplete-item" data-name="${f.name}"><div><div class="ac-name">${f.name}</div><div class="ac-meta">${f.k100}kcal / 100g · 단백질 ${f.p100}g</div></div>${f.isUser?'<span class="ac-badge">내 DB</span>':''}</div>`).join('');
     acDiv.style.display='block';
     acDiv.querySelectorAll('.autocomplete-item').forEach(item=>{
       item.addEventListener('mousedown',e=>{
         e.preventDefault();
-        const name=item.dataset.name;
-        nameInput.value=name;
-        row._food=findFood(name);
+        nameInput.value=item.dataset.name;
+        row._food=findFood(item.dataset.name);
         acDiv.style.display='none';
         recalcKcal(row);
         gramInput.focus();
       });
     });
   });
-
   nameInput.addEventListener('blur',()=>setTimeout(()=>acDiv.style.display='none',150));
   gramInput.addEventListener('input',()=>recalcKcal(row));
 }
@@ -365,11 +412,8 @@ function addFoodRowData(list,food){
 function recalcKcal(row){
   const g=parseFloat(row.querySelector('.gram').value)||0;
   const kcalInput=row.querySelector('.kcal-display');
-  if(row._food&&g>0){
-    kcalInput.value=Math.round(row._food.k100*g/100);
-  } else if(!g){
-    kcalInput.value='';
-  }
+  if(row._food&&g>0)kcalInput.value=Math.round(row._food.k100*g/100);
+  else if(!g)kcalInput.value='';
 }
 
 function loadTemplate(){
@@ -385,8 +429,7 @@ function loadTemplate(){
     const list=block.querySelector('.food-list');
     (tmpl[meal]||[]).forEach(f=>{
       const match=findFood(f.name);
-      const kcal=match?Math.round(match.k100*f.g/100):0;
-      addFoodRowData(list,{name:f.name,g:f.g,kcal});
+      addFoodRowData(list,{name:f.name,g:f.g,kcal:match?Math.round(match.k100*f.g/100):0});
     });
   });
   showToast('record','식단 불러왔어 ✓','ok');
@@ -413,44 +456,13 @@ function collectRecord(){
   return{mode,meals,memo};
 }
 
-function saveLocal(){
+async function saveRecord(cloud=false){
   const rec=collectRecord();
-  dietDB[dateKey(currentDate)]=rec;
-  saveDietDB();
-  showToast('record','저장됐어 ✓','ok');
-}
-
-async function saveNotion(){
-  if(!cfg.token||!cfg.dbId){showToast('record','⚙️ 설정 탭에서 토큰과 DB ID를 먼저 입력해줘','err');return}
-  const rec=collectRecord();
-  dietDB[dateKey(currentDate)]=rec;
-  saveDietDB();
-  const totals=calcTotals(rec);
-  const mealText=MEALS.map(meal=>{
-    const foods=rec.meals[meal]||[];
-    if(!foods.length)return'';
-    return meal+': '+foods.map(f=>`${f.name}${f.g?' '+f.g+'g':''} ${f.kcal}kcal`).join(', ');
-  }).filter(Boolean).join('\n');
-  const body={parent:{database_id:cfg.dbId},properties:{
-    '날짜':{date:{start:dateKey(currentDate)}},
-    '모드':{select:{name:rec.mode==='gym'?'헬스 복귀 후':'러닝 기간'}},
-    '칼로리':{number:totals.kcal},
-    '단백질':{number:totals.p},
-    '탄수화물':{number:totals.c},
-    '지방':{number:totals.f},
-    '식사내역':{rich_text:[{text:{content:mealText}}]},
-    '메모':{rich_text:[{text:{content:rec.memo||''}}]}
-  }};
-  showToast('record','노션 저장 중...','ok');
-  try{
-    const res=await fetch('https://api.notion.com/v1/pages',{
-      method:'POST',
-      headers:{'Authorization':'Bearer '+cfg.token,'Content-Type':'application/json','Notion-Version':'2022-06-28'},
-      body:JSON.stringify(body)
-    });
-    if(res.ok)showToast('record','노션에 저장됐어 ✓','ok');
-    else{const e=await res.json();showToast('record','저장 실패: '+(e.message||res.status),'err')}
-  }catch(e){showToast('record','오류: '+e.message,'err')}
+  const key=dateKey(currentDate);
+  localRecords[key]=rec;
+  const ok=await upsertRecord(rec,key);
+  if(ok)showToast('record','저장됐어 ✓','ok');
+  else showToast('record','저장 실패했어','err');
 }
 
 function calcTotals(rec){
@@ -459,8 +471,10 @@ function calcTotals(rec){
   return{kcal:Math.round(kcal),p:Math.round(p),c:Math.round(c),f:Math.round(f)};
 }
 
-function renderSummary(){
-  const rec=getRecord(currentDate);
+async function renderSummary(){
+  const key=dateKey(currentDate);
+  let rec=localRecords[key];
+  if(!rec){const remote=await fetchRecord(key);rec=remote||{mode:'running',meals:{'아침':[],'점심':[],'저녁':[]},memo:''};localRecords[key]=rec;}
   const totals=calcTotals(rec);
   const target=TARGETS[rec.mode||'running'];
   document.getElementById('date-display2').textContent=formatDate(currentDate);
@@ -485,15 +499,15 @@ function renderSummary(){
   if(memo){mc.style.display='';document.getElementById('memo-summary').textContent=memo}else mc.style.display='none';
 }
 
-function renderHistory(){
-  const keys=Object.keys(dietDB).sort().reverse();
+async function renderHistory(){
+  const records=await fetchAllRecords();
   const list=document.getElementById('history-list');
-  if(!keys.length){list.innerHTML='<div class="empty-state">아직 기록이 없어</div>';return}
-  list.innerHTML=keys.map(key=>{
-    const rec=dietDB[key];const totals=calcTotals(rec);
-    const d=new Date(key+'T00:00:00');
+  if(!records.length){list.innerHTML='<div class="empty-state">아직 기록이 없어</div>';return}
+  list.innerHTML=records.map(rec=>{
+    const totals=calcTotals(rec);
+    const d=new Date(rec.date+'T00:00:00');
     const days=['일','월','화','수','목','금','토'];
-    return`<div class="history-item" onclick="goToDate('${key}')"><div style="display:flex;justify-content:space-between"><span class="history-date">${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})</span><span style="font-size:11px;color:#bbb">${rec.mode==='gym'?'헬스 복귀':'러닝'}</span></div><p class="history-meta">${totals.kcal}kcal · 단백질 ${totals.p}g · 탄수화물 ${totals.c}g · 지방 ${totals.f}g</p>${rec.memo?`<p style="font-size:11px;color:#bbb;margin-top:2px">${rec.memo.slice(0,30)}${rec.memo.length>30?'...':''}</p>`:''}</div>`;
+    return`<div class="history-item" onclick="goToDate('${rec.date}')"><div style="display:flex;justify-content:space-between"><span class="history-date">${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})</span><span style="font-size:11px;color:#bbb">${rec.mode==='gym'?'헬스 복귀':'러닝'}</span></div><p class="history-meta">${totals.kcal}kcal · 단백질 ${totals.p}g · 탄수화물 ${totals.c}g · 지방 ${totals.f}g</p>${rec.memo?`<p style="font-size:11px;color:#bbb;margin-top:2px">${rec.memo.slice(0,30)}${rec.memo.length>30?'...':''}</p>`:''}</div>`;
   }).join('');
 }
 
@@ -531,28 +545,13 @@ function renderUserFoodList(){
     userFoods.map(f=>`<div class="food-db-row"><span class="food-db-name">${f.name}</span><span class="food-db-meta">${f.k100}kcal · 단백질 ${f.p100}g / 100g</span><button class="food-db-del" onclick="deleteFoodFromDB('${f.name}')">×</button></div>`).join('');
 }
 
-function renderSettings(){
-  document.getElementById('token-input').value=cfg.token||'';
-  document.getElementById('dbid-input').value=cfg.dbId||'';
-}
-
-function saveSettings(){
-  cfg.token=document.getElementById('token-input').value.trim();
-  cfg.dbId=document.getElementById('dbid-input').value.trim();
-  saveCfg();
-  showToast('settings','설정 저장됐어 ✓','ok');
-  checkSetup();
-}
-
 function showToast(panel,msg,type){
   const el=document.getElementById('toast-'+panel);
   el.textContent=msg;el.className='toast '+type;
   setTimeout(()=>el.className='toast',3500);
 }
 
-loadDietDB();loadCfg();loadUserFoods();checkSetup();
-renderRecord();
-document.querySelectorAll('.date-display').forEach(el=>el.textContent=formatDate(currentDate));
+initAuth();
 </script>
 </body>
 </html>
